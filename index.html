@@ -43,7 +43,7 @@
             </th>
             <th>
                 <input type="file"id="file_1" name="file_1">
-                <div id = "drop_zone" ondrop= "dropHandler(event);" ondragover= "dragOverHandler(event);"><p>Arrastra y suelta uno o más archivos a esta zona ...</p></div>
+                <!--<div id = "drop_zone" ondrop= "dropHandler(event);" ondragover= "dragOverHandler(event);"><p>Arrastra y suelta uno o más archivos a esta zona ...</p></div>-->
             </th>
                 
         </tr>
@@ -156,47 +156,6 @@
             s = s.replace(/\r/g, '');
             return s;
         }
-        function dragOverHandler(ev) {
-            console.log('File(s) in drop zone');
-
-            ev.preventDefault();
-        }
-        function removeDragData(ev){
-            console.log('Borrando drag data');
-
-            if(ev.dataTransfer.items){
-                ev.dataTransfer.items.clear();
-            } else {
-                ev.dataTransfer.clearData();
-            }
-        }
-
-        function dropHandler(ev){
-        
-            console.log('File(s) dropped');
-
-            // Prevenir el comportamiento por defecto (Evitar que se abra el archivo)
-            ev.preventDefault();
-
-            if(ev.dataTransfer.items){
-                // Use la interfaz DataTransferItemList para acceder a los archivos
-                for (var i = 0 ; i < ev.dataTransfer.items.length;i++){
-                    // Si los elementos soltados no son archivos, retirarlos.
-                    if(ev.dataTransfer.items[i].kind === 'file'){
-                        var file = ev.dataTransfer.items[i].getAsFile();
-                        console.log('... file[' + i + '].name = ' + file.name);
-                        readFile1(file);
-                    }
-                }               
-                } else {
-                    //Usar dataTrasfer para acceder a los archivos.
-                    for (var i = 0; i < ev.dataTransfer.files.leght;i++){
-                        console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name); 
-                    }
-                }
-                // Pase el evento a removeDragData para la limpieza
-                removeDragData(ev);
-            }
         
         function limpiarResultados() {
             document.getElementById("result_1_title").innerHTML="";
@@ -260,17 +219,16 @@
 
         function readFile1(evt){
 
-            console.log(evt);
             //falta excepcion dependiendo de el tipo de archivo o file le pasemos si le pasamos evt desde drog convertirlo en evt.
-            //var f = evt.target.files[0];
-            var f = evt;
+            let f = evt.target.files[0];
+            
             //AÑADIDO
             file_1 = {};
 
             if (f) {
                 var r = new FileReader();
-                r.onload = function(e) {
-                    var contents = e.target.result;
+                r.onload = function(e) { 
+                    var contents = e.target.result;     
                     contents = cleanString(contents);
                     // TODO
                     // Seguimos aqui luego y hacemos split con \n : txt_slp = array con contenido.
@@ -619,8 +577,14 @@
             
             mergedResult = {};
             var files = getFiles();
-            var listOfIndex = [];
+            let listOfIndex_file1 = [];
+            let listOfIndex_file2 = [];
+            let listOfIndex_file3 = [];
+            let listOfIndex_file4 = [];
+            let listOfIndex_file5 = [];
+            let listOfIndex_file6 = [];
             var textoFinal = "";
+      
             
             //ELIMINACION DE DIV ERROR
             if(document.getElementById('alert-error') != null ){
@@ -632,40 +596,84 @@
                 alert("No hay archivos");
                 limpiarResultados();
             }
-                for (var i = 0; i < files.length ; i++){
+            
+            for (var i = 0; i < files.length ; i++){
 
-        // RECORREMOS OBJETOS.
-        for (var index in files[i]){
-            if (mergedResult[index] == "undefined"){
-            mergedResult[index] = "";
-        }
-            mergedResult[index] += files[i][index];
+                console.log(" Recorremos los ficheros " + i);
+                // RECORREMOS OBJETOS.
+                
+                for (var index in files[i]){
 
-            if ( i == 0){
-            listOfIndex.push(index);
-            }else{
-                if (! listOfIndex.includes(index)){
-                var msg = "La CLAVE "+ index +" no esta en el primer fichero";
+                    console.log(" Recorriendo las claves: " + index);
 
-            $("#messages").append("<div class=\"alert alert-warning\" role=\"alert\" id=\"alert-error\">"+msg+"</div>");
-            textoFinal+=msg + "\r\n";
-        }
-    }
-   }
-}
-// Recorremos ahora para crear el fichero txt
-    for (var index in mergedResult){
-        textoFinal+=index;
-        textoFinal+="\r\n";
-        textoFinal+=mergedResult[index];
-        textoFinal+="\r\n";
-    }
+                    if (mergedResult[index] == "undefined"){
+                        mergedResult[index] = "";
+                    }
+
+                    mergedResult[index] += files[i][index];
+                    
+                    if ( i == 0){
+                        listOfIndex_file1.push(index);
+                    }else if(i == 1){
+                        listOfIndex_file2.push(index);
+                    }else if(i == 2){
+                        listOfIndex_file3.push(index);
+                    }else if(i == 3){
+                        listOfIndex_file3.push(index);
+                    }else if(i == 4){
+                        listOfIndex_file4.push(index);
+                    }else if(i == 5){
+                        listOfIndex_file5.push(index);
+                    }else if(i == 6){
+                        listOfIndex_file6.push(index);
+                    }
+                    
+                    if (! listOfIndex_file1.includes(index) && listOfIndex_file1.length >0 ){
+                            var msg = "La CLAVE "+ index +" no esta en el primer fichero";
+                            $("#messages").append("<div class=\"alert alert-warning\" role=\"alert\" id=\"alert-error\">"+msg+"</div>");
+                            textoFinal+=msg + "\r\n";
+                        }
+                        if (! listOfIndex_file2.includes(index) && listOfIndex_file2.length >0){
+                            var msg = "La CLAVE "+ index +" no esta en el segundo fichero";
+                            $("#messages").append("<div class=\"alert alert-warning\" role=\"alert\" id=\"alert-error\">"+msg+"</div>");
+                            textoFinal+=msg + "\r\n";
+                        }
+                        if (! listOfIndex_file3.includes(index) && listOfIndex_file3.length >0){
+                            var msg = "La CLAVE "+ index +" no esta en el tercer fichero";
+                            $("#messages").append("<div class=\"alert alert-warning\" role=\"alert\" id=\"alert-error\">"+msg+"</div>");
+                            textoFinal+=msg + "\r\n";
+                        }
+                        if (! listOfIndex_file4.includes(index)&& listOfIndex_file4.length >0 ){
+                            var msg = "La CLAVE "+ index +" no esta en el cuarto fichero";
+                            $("#messages").append("<div class=\"alert alert-warning\" role=\"alert\" id=\"alert-error\">"+msg+"</div>");
+                            textoFinal+=msg + "\r\n";
+                        }
+                        if (! listOfIndex_file5.includes(index) && listOfIndex_file5.length >0){
+                            var msg = "La CLAVE "+ index +" no esta en el quinto fichero";
+                            $("#messages").append("<div class=\"alert alert-warning\" role=\"alert\" id=\"alert-error\">"+msg+"</div>");
+                            textoFinal+=msg + "\r\n";
+                        }
+                    
+                }
+            }
+            
+            //console.log(claves);
+            
+            // Recorremos ahora para crear el fichero txt
+            for (var index in mergedResult){
+                textoFinal+=index;
+                textoFinal+="\r\n";
+                textoFinal+=mergedResult[index];
+                textoFinal+="\r\n";
+            }
+            
         textoFinal = textoFinal.replace(/undefined/g,"");
         download("garen.txt",textoFinal);
         document.getElementById('mergedResult').innerHTML = JSON.stringify(mergedResult);
         llamarGaren();
         limpiarInputFile();
-            }
+        
+        }
     </script>
 
 
